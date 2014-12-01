@@ -1826,6 +1826,16 @@ public class LauncherModel extends BroadcastReceiver {
                                 final AppWidgetProviderInfo provider =
                                         widgets.getAppWidgetInfo(appWidgetId);
 
+                                // Debug Info by syl
+                                Log.d(TAG, "loadWorkspace: "+isSafeMode);
+                                if(provider == null) {
+                                	Log.d(TAG, "provider is null");
+                                }else if(provider.provider == null) {
+                                	Log.d(TAG, "provider.provider is null");
+                                }else if(provider.provider.getPackageName() == null) {
+                                	Log.d(TAG, "provider.provider.getPackageName is null");
+                                }
+                                
                                 if (!isSafeMode && (provider == null || provider.provider == null ||
                                         provider.provider.getPackageName() == null)) {
                                     String log = "Deleting widget that isn't installed anymore: id="
@@ -2176,8 +2186,13 @@ public class LauncherModel extends BroadcastReceiver {
 
             // Bind the widgets, one at a time
             N = appWidgets.size();
+            Log.d(TAG, "bindWorkspaceItems, appWidgets size="+N);
+            
             for (int i = 0; i < N; i++) {
                 final LauncherAppWidgetInfo widget = appWidgets.get(i);
+                
+                Log.d(TAG, "the "+i+" = "+widget.providerName);
+                
                 final Runnable r = new Runnable() {
                     public void run() {
                         Callbacks callbacks = tryGetCallbacks(oldCallbacks);

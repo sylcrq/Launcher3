@@ -256,6 +256,8 @@ public class LauncherProvider extends ContentProvider {
      * @param workspaceResId that can be 0 to use default or non-zero for specific resource
      */
     synchronized public void loadDefaultFavoritesIfNecessary(int origWorkspaceResId) {
+    	Log.i(TAG, "loadDefaultFavoritesIfNecessary: "+origWorkspaceResId);
+    	
         String spKey = LauncherAppState.getSharedPreferencesKey();
         SharedPreferences sp = getContext().getSharedPreferences(spKey, Context.MODE_PRIVATE);
 
@@ -1005,6 +1007,8 @@ public class LauncherProvider extends ContentProvider {
          * @param filterContainerId The specific container id of items to load
          */
         private int loadFavorites(SQLiteDatabase db, int workspaceResourceId) {
+        	Log.i(TAG, "loadFavorites: "+workspaceResourceId);
+        	
             Intent intent = new Intent(Intent.ACTION_MAIN, null);
             intent.addCategory(Intent.CATEGORY_LAUNCHER);
             ContentValues values = new ContentValues();
@@ -1268,9 +1272,13 @@ public class LauncherProvider extends ContentProvider {
                 SQLiteDatabase db, ContentValues values, TypedArray a,
                 PackageManager packageManager) throws XmlPullParserException, IOException {
 
+        	Log.i(TAG, "addAppWidget");
+        	
             String packageName = a.getString(R.styleable.Favorite_packageName);
             String className = a.getString(R.styleable.Favorite_className);
 
+            Log.d(TAG, "packageName="+packageName+", className="+className);
+            
             if (packageName == null || className == null) {
                 return false;
             }
@@ -1294,6 +1302,8 @@ public class LauncherProvider extends ContentProvider {
                 int spanX = a.getInt(R.styleable.Favorite_spanX, 0);
                 int spanY = a.getInt(R.styleable.Favorite_spanY, 0);
 
+                Log.d(TAG, "spanX="+spanX+", spanY="+spanY);
+                
                 // Read the extras
                 Bundle extras = new Bundle();
                 int widgetDepth = parser.getDepth();
@@ -1325,6 +1335,8 @@ public class LauncherProvider extends ContentProvider {
         }
         private boolean addAppWidget(SQLiteDatabase db, ContentValues values, ComponentName cn,
                 int spanX, int spanY, Bundle extras) {
+        	Log.i(TAG, "addAppWidget:"+cn.toString()+"["+spanX+","+spanY+"]");
+        	
             boolean allocatedAppWidgets = false;
             final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext);
 
@@ -1356,6 +1368,8 @@ public class LauncherProvider extends ContentProvider {
                 Log.e(TAG, "Problem allocating appWidgetId", ex);
             }
 
+            Log.d(TAG, "allocatedAppWidgets="+allocatedAppWidgets);
+            
             return allocatedAppWidgets;
         }
 
