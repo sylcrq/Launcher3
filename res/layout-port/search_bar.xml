@@ -18,8 +18,10 @@
     xmlns:launcher="http://schemas.android.com/apk/res-auto/com.android.launcher3"
     style="@style/SearchDropTargetBar"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="match_parent">
+    <!--  
     android:background="@drawable/search_frame">
+    -->
    <!-- Global search icon -->
    <com.android.launcher3.HolographicLinearLayout
         style="@style/SearchButton"
@@ -45,7 +47,7 @@
             android:src="@drawable/ic_home_search_normal_holo"
             android:adjustViewBounds="true" />
     </com.android.launcher3.HolographicLinearLayout>
-
+	
     <!-- Voice search icon -->
     <com.android.launcher3.HolographicLinearLayout
         style="@style/SearchButton"

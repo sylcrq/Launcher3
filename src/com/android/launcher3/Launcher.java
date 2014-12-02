@@ -3324,7 +3324,7 @@ public class Launcher extends Activity
                         TOOLBAR_ICON_METADATA_NAME);
             }
 
-            if (searchButtonContainer != null) searchButtonContainer.setVisibility(View.VISIBLE);
+            if (searchButtonContainer != null) searchButtonContainer.setVisibility(View.GONE); //searchButtonContainer.setVisibility(View.VISIBLE);
             searchButton.setVisibility(View.VISIBLE);
             invalidatePressedFocusedStates(searchButtonContainer, searchButton);
             return true;
