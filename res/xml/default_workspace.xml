@@ -44,6 +44,14 @@
         launcher:y="3" />
 
     <!-- Right screen [3] -->
+    <appwidget
+        launcher:packageName="com.example.android.monthcalendarwidget"
+        launcher:className="com.example.android.monthcalendarwidget.MonthCalendarWidget"
+        launcher:screen="3"
+        launcher:x="0"
+        launcher:y="0"
+        launcher:spanX="4"
+        launcher:spanY="4" />
     <favorite
         launcher:packageName="com.android.gallery3d"
         launcher:className="com.android.gallery3d.app.Gallery"
