@@ -26,6 +26,7 @@ import android.graphics.Paint.FontMetrics;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -52,6 +53,9 @@ class DeviceProfileQuery {
 }
 
 class DeviceProfile {
+	
+	private static final String TAG = "DeviceProfile";  // Added by syl for DEBUG
+	
     String name;
     float minWidthDps;
     float minHeightDps;
@@ -120,6 +124,8 @@ class DeviceProfile {
                   int wPx, int hPx,
                   int awPx, int ahPx,
                   Resources resources) {
+    	Log.i(TAG, "DeviceProfile=["+minWidth+","+minHeight+"],["+wPx+","+hPx+"]["+awPx+","+ahPx+"]");
+    	
         DisplayMetrics dm = resources.getDisplayMetrics();
         ArrayList<DeviceProfileQuery> points =
                 new ArrayList<DeviceProfileQuery>();
@@ -128,6 +134,8 @@ class DeviceProfile {
         minWidthDps = minWidth;
         minHeightDps = minHeight;
 
+        Log.d(TAG, "minWidthDps="+minWidthDps+", minHeightDps="+minHeightDps);
+        
         ComponentName cn = new ComponentName(context.getPackageName(),
                 this.getClass().getName());
         defaultWidgetPadding = AppWidgetHostView.getDefaultPaddingForWidget(context, cn, null);
@@ -135,17 +143,28 @@ class DeviceProfile {
         desiredWorkspaceLeftRightMarginPx = 2 * edgeMarginPx;
         pageIndicatorHeightPx = resources.getDimensionPixelSize(R.dimen.dynamic_grid_page_indicator_height);
 
+        Log.d(TAG, "defaultWidgetPadding="+defaultWidgetPadding+",edgeMarginPx="+edgeMarginPx);
+        Log.d(TAG, "desireWorkspaceLeftRightMarginPx="+desiredWorkspaceLeftRightMarginPx+",pageIndicatorHeightPx="+pageIndicatorHeightPx);
+        
         // Interpolate the rows
         for (DeviceProfile p : profiles) {
             points.add(new DeviceProfileQuery(p.minWidthDps, p.minHeightDps, p.numRows));
         }
         numRows = Math.round(invDistWeightedInterpolate(minWidth, minHeight, points));
+        //numRows--;
+        //numRows = 5;
+        
         // Interpolate the columns
         points.clear();
         for (DeviceProfile p : profiles) {
             points.add(new DeviceProfileQuery(p.minWidthDps, p.minHeightDps, p.numColumns));
         }
         numColumns = Math.round(invDistWeightedInterpolate(minWidth, minHeight, points));
+        //numColumns--;
+        //numColumns = 5;
+        
+        Log.d(TAG, "numRows="+numRows+",numColumns="+numColumns);
+        
         // Interpolate the icon size
         points.clear();
         for (DeviceProfile p : profiles) {
@@ -154,6 +173,8 @@ class DeviceProfile {
         iconSize = invDistWeightedInterpolate(minWidth, minHeight, points);
         iconSizePx = DynamicGrid.pxFromDp(iconSize, dm);
 
+        Log.d(TAG, "iconSize="+iconSize+","+"iconSizePx="+iconSizePx);
+        
         // Interpolate the icon text size
         points.clear();
         for (DeviceProfile p : profiles) {
@@ -162,6 +183,8 @@ class DeviceProfile {
         iconTextSize = invDistWeightedInterpolate(minWidth, minHeight, points);
         iconTextSizePx = DynamicGrid.pxFromSp(iconTextSize, dm);
 
+        Log.d(TAG, "iconTextSize="+iconTextSize+",iconTextSizePx="+iconTextSizePx);
+        
         // Interpolate the hotseat size
         points.clear();
         for (DeviceProfile p : profiles) {
@@ -176,8 +199,13 @@ class DeviceProfile {
         // Hotseat
         hotseatIconSize = invDistWeightedInterpolate(minWidth, minHeight, points);
         hotseatIconSizePx = DynamicGrid.pxFromDp(hotseatIconSize, dm);
-        hotseatAllAppsRank = (int) (numColumns / 2);
-
+        //hotseatAllAppsRank = (int) (numColumns / 2);
+        //Modify by syl
+        hotseatAllAppsRank = (int)(numHotseatIcons / 2);
+        
+        Log.d(TAG, "numHotseatIcons="+numHotseatIcons);
+        Log.d(TAG, "hotseatIconSize="+hotseatIconSize+",hotseatIconSizePx="+hotseatIconSizePx+",hotseatAllAppsRank="+hotseatAllAppsRank);
+        
         // Calculate other vars based on Configuration
         updateFromConfiguration(resources, wPx, hPx, awPx, ahPx);
 
@@ -187,6 +215,9 @@ class DeviceProfile {
         searchBarSpaceWidthPx = Math.min(searchBarSpaceMaxWidthPx, widthPx);
         searchBarSpaceHeightPx = searchBarHeightPx + 2 * edgeMarginPx;
 
+        Log.d(TAG, "searchBarSpaceMaxWidthPx="+searchBarSpaceMaxWidthPx+",searchBarHeightPx"+searchBarHeightPx);
+        Log.d(TAG, "searchBarSpaceWidthPx="+searchBarSpaceWidthPx+",searchBarSpaceHeightPx="+searchBarSpaceHeightPx);
+        
         // Calculate the actual text height
         Paint textPaint = new Paint();
         textPaint.setTextSize(iconTextSizePx);
@@ -194,6 +225,8 @@ class DeviceProfile {
         cellWidthPx = iconSizePx;
         cellHeightPx = iconSizePx + (int) Math.ceil(fm.bottom - fm.top);
 
+        Log.d(TAG, "cellWidthPx="+cellWidthPx+",cellHeightPx="+cellHeightPx);
+        
         // At this point, if the cells do not fit into the available height, then we need
         // to shrink the icon size
         /*
@@ -215,11 +248,17 @@ class DeviceProfile {
         hotseatCellWidthPx = iconSizePx;
         hotseatCellHeightPx = iconSizePx;
 
+        Log.d(TAG, "hotseatBarHeightPx="+hotseatBarHeightPx);
+        Log.d(TAG, "hotseatCellWidthPx="+hotseatCellWidthPx+",hotseatCellHeightPx="+hotseatCellHeightPx);
+        
         // Folder
         folderCellWidthPx = cellWidthPx + 3 * edgeMarginPx;
         folderCellHeightPx = cellHeightPx + (int) ((3f/2f) * edgeMarginPx);
         folderBackgroundOffset = -edgeMarginPx;
         folderIconSizePx = iconSizePx + 2 * -folderBackgroundOffset;
+        
+        Log.d(TAG, "folderCellWidthPx="+folderCellWidthPx+",folderCellHeightPx="+folderCellHeightPx);
+        Log.d(TAG, "folderBackgroundOffset="+folderBackgroundOffset+",folderIconSizePx="+folderIconSizePx);
     }
 
     void updateFromConfiguration(Resources resources, int wPx, int hPx,
@@ -240,11 +279,26 @@ class DeviceProfile {
         if (isLandscape) {
             allAppsNumRows = (availableHeightPx - pageIndicatorOffset - 4 * edgeMarginPx) /
                     (iconSizePx + iconTextSizePx + 2 * edgeMarginPx);
+        	//allAppsNumRows = 5;
+        	//allAppsNumCols = 5;
         } else {
             allAppsNumRows = (int) numRows + 1;
+            //allAppsNumRows = 4;
+            //allAppsNumCols = 6;
         }
         allAppsNumCols = (availableWidthPx - padding.left - padding.right - 2 * edgeMarginPx) /
                 (iconSizePx + 2 * edgeMarginPx);
+        
+        Log.d(TAG, "allAppsNumRows="+allAppsNumRows+",allAppsNumCols="+allAppsNumCols);
+        
+        // Add by syl
+        if(isLandscape) {
+        	allAppsNumCols = allAppsNumRows;
+        } else {
+        	allAppsNumRows--;
+        }
+        
+        Log.d(TAG, "allAppsNumRows="+allAppsNumRows+",allAppsNumCols="+allAppsNumCols);
     }
 
     private float dist(PointF p0, PointF p1) {
@@ -503,6 +557,8 @@ public class DynamicGrid {
                        int minWidthPx, int minHeightPx,
                        int widthPx, int heightPx,
                        int awPx, int ahPx) {
+    	Log.i(TAG, "DynamicGrid=["+minWidthPx+","+minHeightPx+"],["+widthPx+","+heightPx+"]["+awPx+","+ahPx+"]");
+    	
         DisplayMetrics dm = resources.getDisplayMetrics();
         ArrayList<DeviceProfile> deviceProfiles =
                 new ArrayList<DeviceProfile>();
@@ -535,6 +591,9 @@ public class DynamicGrid {
          */
         deviceProfiles.add(new DeviceProfile("20-inch Tablet",
                 1527, 2527,  7, 7,  100, 20,  7, 72));
+        // Added by syl
+        //deviceProfiles.add(new DeviceProfile("Asus Tablet", 
+        //		w, h, 5, 5, is, its, hs, his));
         mMinWidth = dpiFromPx(minWidthPx, dm);
         mMinHeight = dpiFromPx(minHeightPx, dm);
         mProfile = new DeviceProfile(context, deviceProfiles,
