@@ -146,13 +146,15 @@ class DeviceProfile {
         Log.d(TAG, "defaultWidgetPadding="+defaultWidgetPadding+",edgeMarginPx="+edgeMarginPx);
         Log.d(TAG, "desireWorkspaceLeftRightMarginPx="+desiredWorkspaceLeftRightMarginPx+",pageIndicatorHeightPx="+pageIndicatorHeightPx);
         
+        // Add by syl - 2014/12/03
+        // 下面的过程中 rows, columns, icon size, icon text size, hotseat size, hotseat icon size
+        // 这6项是与DeviceProfile数组profiles中添加的数据进行匹配计算(返回[minWidthDps,minHeightDps]最接近的 ?)
+        
         // Interpolate the rows
         for (DeviceProfile p : profiles) {
             points.add(new DeviceProfileQuery(p.minWidthDps, p.minHeightDps, p.numRows));
         }
         numRows = Math.round(invDistWeightedInterpolate(minWidth, minHeight, points));
-        //numRows--;
-        //numRows = 5;
         
         // Interpolate the columns
         points.clear();
@@ -160,8 +162,6 @@ class DeviceProfile {
             points.add(new DeviceProfileQuery(p.minWidthDps, p.minHeightDps, p.numColumns));
         }
         numColumns = Math.round(invDistWeightedInterpolate(minWidth, minHeight, points));
-        //numColumns--;
-        //numColumns = 5;
         
         Log.d(TAG, "numRows="+numRows+",numColumns="+numColumns);
         
@@ -261,6 +261,8 @@ class DeviceProfile {
         Log.d(TAG, "folderBackgroundOffset="+folderBackgroundOffset+",folderIconSizePx="+folderIconSizePx);
     }
 
+    // Add by syl - 2014/12/03
+    // 横竖屏切换时,调用该函数改变allAppsNumRows & allAppsNumCols
     void updateFromConfiguration(Resources resources, int wPx, int hPx,
                                  int awPx, int ahPx) {
         isLandscape = (resources.getConfiguration().orientation ==
@@ -279,24 +281,17 @@ class DeviceProfile {
         if (isLandscape) {
             allAppsNumRows = (availableHeightPx - pageIndicatorOffset - 4 * edgeMarginPx) /
                     (iconSizePx + iconTextSizePx + 2 * edgeMarginPx);
-        	//allAppsNumRows = 5;
-        	//allAppsNumCols = 5;
+            // TODO: better solution ?
+        	allAppsNumRows = 5;
+        	allAppsNumCols = 5;
         } else {
             allAppsNumRows = (int) numRows + 1;
-            //allAppsNumRows = 4;
-            //allAppsNumCols = 6;
+            // TODO: better solution ?
+            allAppsNumRows = 4;
+            allAppsNumCols = 6;
         }
-        allAppsNumCols = (availableWidthPx - padding.left - padding.right - 2 * edgeMarginPx) /
-                (iconSizePx + 2 * edgeMarginPx);
-        
-        Log.d(TAG, "allAppsNumRows="+allAppsNumRows+",allAppsNumCols="+allAppsNumCols);
-        
-        // Add by syl
-        if(isLandscape) {
-        	allAppsNumCols = allAppsNumRows;
-        } else {
-        	allAppsNumRows--;
-        }
+        //allAppsNumCols = (availableWidthPx - padding.left - padding.right - 2 * edgeMarginPx) /
+        //        (iconSizePx + 2 * edgeMarginPx);
         
         Log.d(TAG, "allAppsNumRows="+allAppsNumRows+",allAppsNumCols="+allAppsNumCols);
     }
@@ -591,9 +586,11 @@ public class DynamicGrid {
          */
         deviceProfiles.add(new DeviceProfile("20-inch Tablet",
                 1527, 2527,  7, 7,  100, 20,  7, 72));
-        // Added by syl
-        //deviceProfiles.add(new DeviceProfile("Asus Tablet", 
-        //		w, h, 5, 5, is, its, hs, his));
+        // Added by syl - 2014/12/03
+        // Add your Device Name & Info(minWidthDps and minHeightDps)
+        // and the Configuration(numRows, numColumns, iconSize, iconTextSize, numHotseatIcons and hotseatIconSize)
+        deviceProfiles.add(new DeviceProfile("Asus Tablet", 
+        		527, 887, 5, 5, 71, 14, 7, 60));
         mMinWidth = dpiFromPx(minWidthPx, dm);
         mMinHeight = dpiFromPx(minHeightPx, dm);
         mProfile = new DeviceProfile(context, deviceProfiles,
