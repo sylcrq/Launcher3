@@ -69,7 +69,10 @@
     <uses-permission android:name="com.android.launcher3.permission.READ_SETTINGS" />
     <uses-permission android:name="com.android.launcher3.permission.WRITE_SETTINGS" />
     <uses-permission android:name="com.android.launcher3.permission.RECEIVE_LAUNCH_BROADCASTS" />
-
+	<!-- Add by syl 2014/12/04 -->
+	<!--  
+    <uses-permission android:name="android.permission.BIND_REMOTEVIEWS" />
+    -->
     <application
         android:name="com.android.launcher3.LauncherApplication"
         android:label="@string/application_name"
@@ -199,6 +202,14 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name="com.android.launcher3.widget.MyAppWidgetProvider" >
+            <intent-filter >
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/my_appwidget_provider_info" />
+        </receiver>
+        
         <!-- The settings provider contains Home's data, like the workspace favorites -->
         <provider
             android:name="com.android.launcher3.LauncherProvider"
