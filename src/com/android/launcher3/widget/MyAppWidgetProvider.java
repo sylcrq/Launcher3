@@ -1,11 +1,18 @@
 package com.android.launcher3.widget;
 
+import com.android.launcher3.R;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
+import android.webkit.WebView.FindListener;
+import android.widget.ImageView;
 
 public class MyAppWidgetProvider extends AppWidgetProvider {
 
@@ -59,6 +66,15 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
 		
 		Log.i(TAG, "onUpdate: appWidgetIds="+appWidgetIds.toString());
+		
+		Time time = new Time();
+		time.setToNow();
+		
+		Intent intent = new Intent(context, MyAppWidgetUpdateService.class);
+		PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+		
+		AlarmManager alarm = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+		alarm.setRepeating(AlarmManager.RTC, time.toMillis(true), 60*1000, pendingIntent);
 	}
 
 }

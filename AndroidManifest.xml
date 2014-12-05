@@ -156,6 +156,8 @@
             android:enabled="@bool/debug_memory_enabled"
             >
         </service>
+        
+        <service android:name="com.android.launcher3.widget.MyAppWidgetUpdateService"></service>
 
         <!-- Intent received used to prepopulate the default workspace. -->
         <receiver
