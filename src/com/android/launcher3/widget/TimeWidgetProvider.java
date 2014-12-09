@@ -11,12 +11,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.Time;
 import android.util.Log;
-import android.webkit.WebView.FindListener;
-import android.widget.ImageView;
 
-public class MyAppWidgetProvider extends AppWidgetProvider {
+public class TimeWidgetProvider extends AppWidgetProvider {
 
-	public static final String TAG = "MyAppWidgetProvider";
+	public static final String TAG = "TimeWidgetProvider";
 	
 	@Override
 	public void onAppWidgetOptionsChanged(Context context,
@@ -32,11 +30,11 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
 	public void onDeleted(Context context, int[] appWidgetIds) {
 		super.onDeleted(context, appWidgetIds);
 		
-		Log.i(TAG, "onDeleted: appWidgetIds="+appWidgetIds.toString());
-		//for(int i=0; i<appWidgetIds.length; i++)
-		//{
-		//	Log.d(TAG, ""+appWidgetIds[i]);
-		//}
+		Log.i(TAG, "onDeleted");
+		for(int appWidgetId : appWidgetIds)
+		{
+			Log.d(TAG, "onDeleted: appWidgetId="+appWidgetId);
+		}
 	}
 
 	@Override
@@ -65,16 +63,20 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
 			int[] appWidgetIds) {
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
 		
-		Log.i(TAG, "onUpdate: appWidgetIds="+appWidgetIds.toString());
+		Log.i(TAG, "onUpdate");
 		
-		Time time = new Time();
-		time.setToNow();
+		for(int appWidgetId : appWidgetIds)
+		{
+			Log.d(TAG, "onUpdate: appWidgetId="+appWidgetId);
+			Time time = new Time();
+			time.setToNow();
 		
-		Intent intent = new Intent(context, MyAppWidgetUpdateService.class);
-		PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+			Intent intent = new Intent(context, TimeWidgetUpdateService.class);
+			PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 		
-		AlarmManager alarm = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-		alarm.setRepeating(AlarmManager.RTC, time.toMillis(true), 60*1000, pendingIntent);
+			AlarmManager alarm = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+			alarm.setRepeating(AlarmManager.RTC, time.toMillis(true), 30*1000, pendingIntent);
+		}
 	}
 
 }

@@ -44,6 +44,7 @@
         launcher:y="3" />
 
     <!-- Right screen [3] -->
+    <!--  
     <appwidget
         launcher:packageName="com.android.launcher3"
         launcher:className="com.android.launcher3.widget.MyAppWidgetProvider"
@@ -52,6 +53,7 @@
         launcher:y="0"
         launcher:spanX="3"
         launcher:spanY="2" />
+        -->
     <favorite
         launcher:packageName="com.android.gallery3d"
         launcher:className="com.android.gallery3d.app.Gallery"

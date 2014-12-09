@@ -157,8 +157,13 @@
             >
         </service>
         
-        <service android:name="com.android.launcher3.widget.MyAppWidgetUpdateService"></service>
-
+        <!-- service for widget -->
+        <service android:name="com.android.launcher3.widget.TimeWidgetUpdateService"></service>
+        <!--  
+        <service android:name="com.android.launcher3.widget.NewVideoWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" ></service>
+		-->
+		
         <!-- Intent received used to prepopulate the default workspace. -->
         <receiver
             android:name="com.android.launcher3.PreloadReceiver"
@@ -204,13 +209,25 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.android.launcher3.widget.MyAppWidgetProvider" >
+        <!-- time widget -->
+        <receiver android:name="com.android.launcher3.widget.TimeWidgetProvider" >
             <intent-filter >
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider"
-                android:resource="@xml/my_appwidget_provider_info" />
+                android:resource="@xml/time_widget_provider_info" />
         </receiver>
+        
+        <!-- new video widget -->
+        <!--  
+        <receiver android:name="com.android.launcher3.widget.NewVideoWidgetProvider" >
+            <intent-filter >
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/new_video_provider_info" />
+        </receiver>
+        -->
         
         <!-- The settings provider contains Home's data, like the workspace favorites -->
         <provider
