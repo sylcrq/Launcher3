@@ -159,10 +159,8 @@
         
         <!-- service for widget -->
         <service android:name="com.android.launcher3.widget.TimeWidgetUpdateService"></service>
-        <!--  
         <service android:name="com.android.launcher3.widget.NewVideoWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" ></service>
-		-->
 		
         <!-- Intent received used to prepopulate the default workspace. -->
         <receiver
@@ -219,7 +217,6 @@
         </receiver>
         
         <!-- new video widget -->
-        <!--  
         <receiver android:name="com.android.launcher3.widget.NewVideoWidgetProvider" >
             <intent-filter >
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -227,7 +224,6 @@
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/new_video_provider_info" />
         </receiver>
-        -->
         
         <!-- The settings provider contains Home's data, like the workspace favorites -->
         <provider
