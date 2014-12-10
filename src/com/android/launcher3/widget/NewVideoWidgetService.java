@@ -33,34 +33,31 @@ public class NewVideoWidgetService extends RemoteViewsService {
 		//private static final String IMAGE_ITEM = "image_item";
 		//private static final String TEXT_ITEM = "text_item";
 		
-		//private String[] mText = new String[] {
-		//	"Pic 1", "Pic 2", "Pic 3",
-		//	"Pic 4", "Pic 5", "Pic 6",
-		//	"Pic 7", "Pic 8", "Pic 9"
-		//};
+		private String[] mText = new String[] {
+			"Pic 1", "Pic 2", "Pic 3",
+			"Pic 4", "Pic 5", "Pic 6",
+			"Pic 7", "Pic 8", "Pic 9"
+		};
 		
-		//private int[] mImage = new int[] {
-		//	R.drawable.pic_1, R.drawable.pic_2, R.drawable.pic_3,
-		//	R.drawable.pic_4, R.drawable.pic_5, R.drawable.pic_6,
-		//	R.drawable.pic_7, R.drawable.pic_8, R.drawable.pic_9
-		//};
+		private int[] mImage = new int[] {
+			R.drawable.pic_1, R.drawable.pic_2, R.drawable.pic_3,
+			R.drawable.pic_4, R.drawable.pic_5, R.drawable.pic_6,
+			R.drawable.pic_7, R.drawable.pic_8, R.drawable.pic_9
+		};
 		
 		//private ArrayList<HashMap<String, Object>> mData;
 		
 		public NewVideoRemoteViewsFactory(Context context, Intent intent) {
-			Log.i(TAG, "NewVideoRemoteViewsFactory");
+			Log.i(TAG, "NewVideoRemoteViewsFactory: appWidgetId="+mAppWidgetId);
 			
 			mContext = context;
 			mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 		}
 		
 		@Override
-		public int getCount() {
-			Log.i(TAG, "getCount = 1");
-			return 1;
-			
-			//Log.i(TAG, "getCount = " + mData.size());			
-			//return mData.size();
+		public int getCount() {			
+			Log.i(TAG, "getCount: TextSize="+mText.length+", ImageSize="+mImage.length);			
+			return (mText.length / 3);
 		}
 
 		@Override
@@ -83,15 +80,16 @@ public class NewVideoWidgetService extends RemoteViewsService {
 			
 			RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.new_video_widget_items);
 			
-			//HashMap<String, Object> map = mData.get(position);
-			//rv.setImageViewResource(R.id.image_item, (Integer)map.get(IMAGE_ITEM));
-			//rv.setTextViewText(R.id.text_item, (String)map.get(TEXT_ITEM));
-			rv.setImageViewResource(R.id.new_video_item_image_1, R.drawable.pic_1);
-			rv.setTextViewText(R.id.new_video_item_text_1, "Pic 1");
-			rv.setImageViewResource(R.id.new_video_item_image_2, R.drawable.pic_2);
-			rv.setTextViewText(R.id.new_video_item_text_2, "Pic 2");
-			rv.setImageViewResource(R.id.new_video_item_image_3, R.drawable.pic_3);
-			rv.setTextViewText(R.id.new_video_item_text_3, "Pic 3");
+			int start = position * 3;
+			
+			rv.setImageViewResource(R.id.new_video_item_image_1, mImage[start]);
+			rv.setTextViewText(R.id.new_video_item_text_1, mText[start]);
+			
+			rv.setImageViewResource(R.id.new_video_item_image_2, mImage[start+1]);
+			rv.setTextViewText(R.id.new_video_item_text_2, mText[start+1]);
+			
+			rv.setImageViewResource(R.id.new_video_item_image_3, mImage[start+2]);
+			rv.setTextViewText(R.id.new_video_item_text_3, mText[start+2]);
 			
 			return rv;
 		}
