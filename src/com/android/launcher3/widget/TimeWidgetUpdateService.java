@@ -41,6 +41,8 @@ public class TimeWidgetUpdateService extends Service {
 		
 		remoteViews.setTextViewText(R.id.widget_time, time_str);
 		remoteViews.setTextViewText(R.id.widget_date, date_str);
+		//remoteViews.setImageViewBitmap(R.id.widget_time, bitmap);
+		//remoteViews.setImageViewBitmap(R.id.widget_date, bitmap);
 		
 		AppWidgetManager manager = AppWidgetManager.getInstance(getApplicationContext());
 		manager.updateAppWidget(new ComponentName(getApplicationContext(), TimeWidgetProvider.class), remoteViews);
