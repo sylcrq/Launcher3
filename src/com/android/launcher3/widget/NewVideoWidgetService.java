@@ -30,9 +30,7 @@ public class NewVideoWidgetService extends RemoteViewsService {
 		private Context mContext;
 		private int mAppWidgetId;
 		
-		//private static final String IMAGE_ITEM = "image_item";
-		//private static final String TEXT_ITEM = "text_item";
-		
+		// 显示的Image和Text测试数据
 		private String[] mText = new String[] {
 			"Pic 1", "Pic 2", "Pic 3",
 			"Pic 4", "Pic 5", "Pic 6",
@@ -43,9 +41,7 @@ public class NewVideoWidgetService extends RemoteViewsService {
 			R.drawable.pic_1, R.drawable.pic_2, R.drawable.pic_3,
 			R.drawable.pic_4, R.drawable.pic_5, R.drawable.pic_6,
 			R.drawable.pic_7, R.drawable.pic_8, R.drawable.pic_9
-		};
-		
-		//private ArrayList<HashMap<String, Object>> mData;
+		};		
 		
 		public NewVideoRemoteViewsFactory(Context context, Intent intent) {
 			Log.i(TAG, "NewVideoRemoteViewsFactory: appWidgetId="+mAppWidgetId);
@@ -81,15 +77,25 @@ public class NewVideoWidgetService extends RemoteViewsService {
 			RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.new_video_widget_items);
 			
 			int start = position * 3;
-			
+			// 设置显示图片和标题
 			rv.setImageViewResource(R.id.new_video_item_image_1, mImage[start]);
 			rv.setTextViewText(R.id.new_video_item_text_1, mText[start]);
+			// 设置当前view被点击时传回给widget的数据
+			Intent fillInIntent_1 = new Intent();
+			fillInIntent_1.putExtra(NewVideoWidgetProvider.COLLECTION_VIEW_EXTRA, start);
+			rv.setOnClickFillInIntent(R.id.new_video_item_image_1, fillInIntent_1);
 			
 			rv.setImageViewResource(R.id.new_video_item_image_2, mImage[start+1]);
 			rv.setTextViewText(R.id.new_video_item_text_2, mText[start+1]);
+			Intent fillInIntent_2 = new Intent();
+			fillInIntent_2.putExtra(NewVideoWidgetProvider.COLLECTION_VIEW_EXTRA, start+1);
+			rv.setOnClickFillInIntent(R.id.new_video_item_image_2, fillInIntent_2);
 			
 			rv.setImageViewResource(R.id.new_video_item_image_3, mImage[start+2]);
 			rv.setTextViewText(R.id.new_video_item_text_3, mText[start+2]);
+			Intent fillInIntent_3 = new Intent();
+			fillInIntent_3.putExtra(NewVideoWidgetProvider.COLLECTION_VIEW_EXTRA, start+2);
+			rv.setOnClickFillInIntent(R.id.new_video_item_image_3, fillInIntent_3);
 			
 			return rv;
 		}
@@ -113,15 +119,6 @@ public class NewVideoWidgetService extends RemoteViewsService {
 			Log.i(TAG, "onCreate");
 		
 			// 填充数据
-			//mData = new ArrayList<HashMap<String,Object>>();
-			//
-			//for(int i=0; i<mImage.length; i++)
-			//{
-			//	HashMap<String, Object> map = new HashMap<String, Object>();
-			//	map.put(TEXT_ITEM, mText[i]);
-			//	map.put(IMAGE_ITEM, mImage[i]);
-			//	mData.add(map);
-			//}
 		}
 
 		@Override
@@ -134,7 +131,7 @@ public class NewVideoWidgetService extends RemoteViewsService {
 		public void onDestroy() {
 			Log.i(TAG, "onDestroy");
 			
-			//mData.clear();
+			// 清理数据
 		}
 		
 	}

@@ -7,16 +7,19 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 public class NewVideoWidgetProvider extends AppWidgetProvider {
 	
 	public static final String TAG = "NewVideoWidgetProvider";
 
-	public static final String PREVIOUS_BUTTON = "com.android.launcher3.widget.NewVideoWidgetProvider.PREV_BUTTON";
-	public static final String NEXT_BUTTON = "com.android.launcher3.widget.NewVideoWidgetProvider.NEXT_BUTTON";
+	public static final String BUTTON_ACTION = "com.android.launcher3.widget.BUTTON_ACTION";
+	public static final String COLLECTION_VIEW_ACTION = "com.android.launcher3.widget.COLLECTION_VIEW_ACTION";
+	public static final String COLLECTION_VIEW_EXTRA = "com.android.launcher3.widget.COLLECTION_VIEW_EXTRA";
 	
 	@Override
 	public void onAppWidgetOptionsChanged(Context context,
@@ -62,21 +65,19 @@ public class NewVideoWidgetProvider extends AppWidgetProvider {
 		
 		Log.i(TAG, "onReceive: action="+action+", appWidgetId="+appWidgetId);
 		
-		if(action.equals(PREVIOUS_BUTTON))
+		if(action.equals(BUTTON_ACTION))
 		{
-			// 显示前一页数据
-			RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.new_video_widget);
-			rv.showPrevious(R.id.new_video_flipper);
-			
-			AppWidgetManager.getInstance(context).partiallyUpdateAppWidget(appWidgetId, rv);
-		}
-		else if(action.equals(NEXT_BUTTON))
-		{
-			// 显示后一页数据
+			// 显示下一组图片
 			RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.new_video_widget);
 			rv.showNext(R.id.new_video_flipper);
 			
 			AppWidgetManager.getInstance(context).partiallyUpdateAppWidget(appWidgetId, rv);
+		}
+		else if(action.equals(COLLECTION_VIEW_ACTION))
+		{
+			// 提示当前被点击的view的下标
+			int viewIndex = intent.getIntExtra(COLLECTION_VIEW_EXTRA, 0) + 1;
+			Toast.makeText(context, "View "+viewIndex+" is Clicked", Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -96,21 +97,27 @@ public class NewVideoWidgetProvider extends AppWidgetProvider {
 			// 设置Service和Adapter
 			Intent intent = new Intent(context, NewVideoWidgetService.class);
 			intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+			// 唯一标识当前intent(存在多个同一widget的情况下)
+			intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
 			rv.setRemoteAdapter(R.id.new_video_flipper, intent);
 			
-			// 设置前一页button
-			Intent prevIntent = new Intent(context, NewVideoWidgetProvider.class);
-			prevIntent.setAction(PREVIOUS_BUTTON);
-			prevIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-			PendingIntent prevPendingIntent = PendingIntent.getBroadcast(context, 0, prevIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-			rv.setOnClickPendingIntent(R.id.new_video_prev_button, prevPendingIntent);
+			// 设置button
+			Intent btIntent = new Intent(context, NewVideoWidgetProvider.class);
+			btIntent.setAction(BUTTON_ACTION);
+			btIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+			// 唯一标识当前intent(存在多个同一widget的情况下)
+			btIntent.setData(Uri.parse(btIntent.toUri(Intent.URI_INTENT_SCHEME)));
+			PendingIntent btPendingIntent = PendingIntent.getBroadcast(context, 0, btIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+			rv.setOnClickPendingIntent(R.id.new_video_button, btPendingIntent);
 			
-			// 设置后一页button
-			Intent nextIntent = new Intent(context, NewVideoWidgetProvider.class);
-			nextIntent.setAction(NEXT_BUTTON);
-			nextIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-			PendingIntent nextPendingIntent = PendingIntent.getBroadcast(context, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-			rv.setOnClickPendingIntent(R.id.new_video_next_button, nextPendingIntent);
+			// 设置intent模板
+			Intent flipperIntent = new Intent(context, NewVideoWidgetProvider.class);
+			flipperIntent.setAction(COLLECTION_VIEW_ACTION);
+			flipperIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+			// 唯一标识当前intent(存在多个同一widget的情况下)
+			flipperIntent.setData(Uri.parse(flipperIntent.toUri(Intent.URI_INTENT_SCHEME)));
+			PendingIntent flipperPendingIntent = PendingIntent.getBroadcast(context, 0, flipperIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+			rv.setPendingIntentTemplate(R.id.new_video_flipper, flipperPendingIntent);
 			
 			appWidgetManager.updateAppWidget(appWidgetId, rv);
 		}
